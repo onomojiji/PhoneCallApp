@@ -35,30 +35,30 @@ import static com.proposeme.seven.phonecall.net.BaseData.PHONE_ANSWER_CALL;
 import static com.proposeme.seven.phonecall.net.BaseData.PHONE_CALL_END;
 import static com.proposeme.seven.phonecall.net.BaseData.PHONE_MAKE_CALL;
 
-// 此界面就是进行呼叫、接听、响铃、正常的切换
+// Cette interface est pour appeler, répondre, sonner et basculer normalement
 public class VoIpP2PActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private Chronometer timer; // 通话计时器
-    private CountDownTimer mCountDownTimer; //打电话超时计时器
+    private Chronometer timer; // Minuterie d'appel
+    private CountDownTimer mCountDownTimer; //Minuterie de délai d'expiration des appels
 
-    // API控制对象
+    // Objet de contrôle API
     private ApiProvider provider;
 
-    private boolean isAnswer = false;  //是否接电话
-    private boolean isBusy = false;  //是否正在通话中。true 表示正忙 false 表示为不忙。
-    private String newEndIp = null; //检测通话结束ip是否合法。
+    private boolean isAnswer = false;  //Répondre au téléphone
+    private boolean isBusy = false;  //Si vous êtes en communication. vrai signifie occupé, faux signifie pas occupé.
+    private String newEndIp = null; //Vérifiez si la fin de l'appel IP est légale.
 
-    private EditText mEditText; //记录用户输入ip地址
+    private EditText mEditText; //Enregistrer l'adresse IP d'entrée de l'utilisateur
 
 
     private VoIPService IPService;
-    // 获取到service对象引用，获取到provider
+    // Obtenez la référence de l'objet de service, obtenez le fournisseur
     private ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             IPService = ((VoIPService.MyBinder) service).getService();
             provider = IPService.getProvider();
-            // 只能在获取到provider 以后才能进行网络的初始化
+            // Le réseau ne peut être initialisé qu'après obtention du fournisseur
             netInit();
         }
 
@@ -67,22 +67,22 @@ public class VoIpP2PActivity extends AppCompatActivity implements View.OnClickLi
         }
     };
 
-    // 状态切换逻辑
+    // Logique de commutation d'état
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
-            //根据标志记性自定义的操作，这个操作可以操作主线程。
-            if (msg.what == PHONE_MAKE_CALL) { //  接受方接收
-                if (!isBusy){ //如果不忙 则跳转到通话界面。
-                    showRingView(); //跳转到响铃界面。
+            //Selon le fonctionnement personnalisé de la mémoire de marques, cette opération peut faire fonctionner le thread principal.
+            if (msg.what == PHONE_MAKE_CALL) { //  Le destinataire reçoit
+                if (!isBusy){ //S'il n'est pas occupé, passez à l'interface d'appel.
+                    showRingView(); //Accédez à l'interface de la cloche.
                     isBusy = true;
                 }
-            }else if (msg.what == PHONE_ANSWER_CALL){ // 发送方接收
+            }else if (msg.what == PHONE_ANSWER_CALL){ // L'expéditeur reçoit
                 showTalkingView();
                 provider.startRecordAndPlay();
-                isAnswer = true; //接通电话为真
-                mCountDownTimer.cancel(); // 关闭倒计时定时器。
-            }else if (msg.what == PHONE_CALL_END){ //收到通话结束的信息 接收方和发送方都可能接收。
+                isAnswer = true; //L'appel connecté est vrai
+                mCountDownTimer.cancel(); // Désactivez le compte à rebours.
+            }else if (msg.what == PHONE_CALL_END){ //Le destinataire et l'expéditeur peuvent recevoir le message de fin d'appel.
                 if (newEndIp.equals(provider.getTargetIP())){
                     showBeginView();
                     isAnswer = false;
@@ -94,7 +94,7 @@ public class VoIpP2PActivity extends AppCompatActivity implements View.OnClickLi
         }
     };
 
-    //跳转activity
+    //Activité de saut
     public static void newInstance(Context context) {
         context.startActivity(new Intent(context, VoIpP2PActivity.class));
     }
@@ -107,7 +107,7 @@ public class VoIpP2PActivity extends AppCompatActivity implements View.OnClickLi
         getWindow().setFlags(WindowManager.LayoutParams. FLAG_FULLSCREEN ,
                 WindowManager.LayoutParams. FLAG_FULLSCREEN);
 
-        //获取打电话ip，然后更新界面。
+        //Obtenez l'IP d'appel, puis mettez à jour l'interface.
         setContentView(R.layout.activity_voip_p2p);
         findViewById(R.id.calling_view).setVisibility(View.GONE);
         findViewById(R.id.talking_view).setVisibility(View.GONE);
@@ -118,45 +118,45 @@ public class VoIpP2PActivity extends AppCompatActivity implements View.OnClickLi
         ((TextView)findViewById(R.id.create_ip_addr)).setText(BaseData.LOCALHOST);
         timer = findViewById(R.id.timer);
 
-        //设置挂断按钮
+        //Définir le bouton de raccrochage
         findViewById(R.id.calling_hangup).setOnClickListener(this);
         findViewById(R.id.talking_hangup).setOnClickListener(this);
         findViewById(R.id.ring_pickup).setOnClickListener(this);
         findViewById(R.id.ring_hang_off).setOnClickListener(this);
-        //设置手动输入ip
+        //Définir l'ip d'entrée manuelle
         findViewById(R.id.Create_button).setOnClickListener(this);
         findViewById(R.id.user_input_phoneCall).setOnClickListener(this);
 
         mEditText = findViewById(R.id.user_input_TargetIp);
-        showBeginView();//显示初始的界面
+        showBeginView();//Afficher l'interface initiale
 
-        //拨打电话倒计时计时器。倒计时10s
+        //Compte à rebours pour les appels. Compte à rebours 10s
         mCountDownTimer = new CountDownTimer(10000, 1000) {
             public void onTick(long millisUntilFinished) {
             }
             public void onFinish() {
-                if (!isAnswer){ //如果没有人应答，则挂断
+                if (!isAnswer){ //Si personne ne répond, raccroche
                     hangupOperation();
-                    Toast.makeText(VoIpP2PActivity.this,"打电话超时，请稍后再试！",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(VoIpP2PActivity.this,"L'appel a expiré, veuillez réessayer plus tard!",Toast.LENGTH_SHORT).show();
                 }
             }
         };
-        //启动服务。
+        //Démarrez le service.
         Intent intent = new Intent(this,VoIPService.class);
         bindService(intent,mServiceConnection,BIND_AUTO_CREATE);
 
-        // 检测是否是由service启动的activity。
+        // Vérifiez s'il s'agit d'une activité démarrée par un service.
         boolean isFromService = getIntent().getBooleanExtra(IFS,false);
         if (isFromService){
-            showRingView(); // 显示通话的界面。
+            showRingView(); // Affichez l'interface de l'appel.
             isBusy = true;
         }
     }
 
     /**
-     *  自动关闭输入法
-     * @param act 当前activity
-     * @param v 绑定的控件。
+     *  Désactiver automatiquement la méthode de saisie
+     * @param act Activité actuel
+     * @param v Contrôle lié。
      */
     public void hideOneInputMethod(Activity act, View v) {
         InputMethodManager imm = (InputMethodManager) act.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -164,24 +164,24 @@ public class VoIpP2PActivity extends AppCompatActivity implements View.OnClickLi
         imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
 
-    //网络初始化操作
+    //Opération d'initialisation du réseau
     private void netInit(){
-        // 注册接口回调。
+        // Enregistrer le rappel d'interface。
         provider.registerFrameResultedCallback(new NettyReceiverHandler.FrameResultedCallback() {
-            //接受通话信令
+            //Recevoir la signalisation d'appel
             @Override
             public void onTextMessage(String msg) {
 
-                // 发送来的信息总共有三种 100 200 300
+                // Il existe trois types d'informations envoyées: 100 200 300
                 mHandler.sendEmptyMessage(Integer.parseInt(msg));
                 /*
-                 PHONE_MAKE_CALL = 100; //拨打电话
-                 PHONE_ANSWER_CALL = 200; //接听电话   //此时需要进行界面的切换。将打电话切成通话界面。
-                 PHONE_CALL_END = 300; //通话结束
+                 PHONE_MAKE_CALL = 100; //composer le numéro
+                 PHONE_ANSWER_CALL = 200; //Répondre à l'appel // Vous devez changer d'interface à ce moment. Coupez l'appel dans une interface d'appel.
+                 PHONE_CALL_END = 300; //appel terminé
                 */
             }
 
-            // 对于录音来说，需要知道对方的IP将音频流发送出去，而对于播放而言，只需要开启线程进行播放即可。
+            // Pour l'enregistrement, vous devez connaître l'adresse IP de l'autre partie pour envoyer le flux audio, et pour la lecture, il vous suffit de démarrer le fil pour la lecture.
             @Override
             public void onAudioData(byte[] data) {
                 if (isAnswer){
@@ -189,30 +189,30 @@ public class VoIpP2PActivity extends AppCompatActivity implements View.OnClickLi
                 }
             }
 
-            //获得对方返回过过来的ip地址
+            //Obtenez l'adresse IP à laquelle l'autre partie est retournée
             @Override
             public void onGetRemoteIP(String ip) {
                 newEndIp = ip; //每次都会记录新的ip。
-                Log.e("ccc", "收到对方ip" + ip);
-                if ((!ip.equals("")) && (!isBusy)){  //如果正忙那么就不能够更改自己的ip。 只能做无应答操作。
+                Log.e("ccc", "Recevoir l'adresse IP de l'autre partie" + ip);
+                if ((!ip.equals("")) && (!isBusy)){  //Si vous êtes occupé, vous ne pouvez pas changer votre adresse IP. Ne peut faire aucune opération de réponse.
                     provider.setTargetIP(ip);
                 }
             }
         });
     }
 
-    //点击后退键触发的方法
+    //Comment déclencher en cliquant sur le bouton retour
     @Override
     public void onBackPressed(){
 
-        // 这时候就需要重新进行注册监听。
-        hangupOperation();// 这时候也会进行挂断。
-        IPService.registerCallBack(); //重新注册监听打电话请求的监听。
+        // À ce stade, vous devez vous inscrire et réécouter。
+        hangupOperation();// Raccrochez aussi à ce moment。
+        IPService.registerCallBack(); //Réenregistrer l'auditeur pour écouter la demande d'appel。
         timer.stop();
-        finish(); //确定以后调用退出方法
+        finish(); //Assurez-vous d'appeler la méthode de sortie plus tard
     }
 
-    // 显示初始界面
+    // Afficher l'interface initiale
     private void showBeginView(){
         findViewById(R.id.begin_view).setVisibility(View.VISIBLE);
         findViewById(R.id.talking_view).setVisibility(View.GONE);
@@ -221,17 +221,17 @@ public class VoIpP2PActivity extends AppCompatActivity implements View.OnClickLi
         findViewById(R.id.user_input_ip_view).setVisibility(View.GONE);
     }
 
-    // 显示用户输入ip界面
+    // Afficher l'interface IP d'entrée utilisateur
     private void showUserInputIpView(){
         findViewById(R.id.user_input_ip_view).setVisibility(View.VISIBLE);
         findViewById(R.id.talking_view).setVisibility(View.GONE);
         findViewById(R.id.ring_view).setVisibility(View.GONE);
         findViewById(R.id.calling_view).setVisibility(View.GONE);
         findViewById(R.id.begin_view).setVisibility(View.GONE);
-        // 从缓存中找到IP地址。
+        // Trouvez l'adresse IP dans le cache。
         mEditText.setText(IPSave.getIP(this));
     }
-    // 显示呼叫时候的view
+    // Afficher la vue lors de l'appel
     private void showCallingView(){
         findViewById(R.id.calling_view).setVisibility(View.VISIBLE);
         findViewById(R.id.talking_view).setVisibility(View.GONE);
@@ -239,10 +239,10 @@ public class VoIpP2PActivity extends AppCompatActivity implements View.OnClickLi
         findViewById(R.id.begin_view).setVisibility(View.GONE);
         findViewById(R.id.user_input_ip_view).setVisibility(View.GONE);
 
-        //开启定时器。
+        //Démarrer la minuterie。
         mCountDownTimer.start();
     }
-    //显示说话时候的view
+    //Afficher la vue lorsque vous parlez
     private void showTalkingView(){
 
         findViewById(R.id.talking_view).setVisibility(View.VISIBLE);
@@ -254,7 +254,7 @@ public class VoIpP2PActivity extends AppCompatActivity implements View.OnClickLi
         timer.start();
     }
 
-    //显示响铃界面
+    //Afficher l'interface de la cloche
     private void showRingView(){
         findViewById(R.id.ring_view).setVisibility(View.VISIBLE);
         findViewById(R.id.calling_view).setVisibility(View.GONE);
@@ -269,50 +269,50 @@ public class VoIpP2PActivity extends AppCompatActivity implements View.OnClickLi
         provider.disConnect();
     }
 
-    //设置点击事件
+    //Définir l'événement de clic
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.ring_pickup: //在响铃界面接电话
+            case R.id.ring_pickup: //Répondez à l'appel sur l'interface de sonnerie
                 showTalkingView();
                 provider.sentTextData(PHONE_ANSWER_CALL.toString());
-                // 开始发送语音信息
+                // Commencer à envoyer un message vocal
                 provider.startRecordAndPlay();
-                isAnswer = true; //接通电话为真
+                isAnswer = true; //L'appel connecté est vrai
                 break;
-            case R.id.calling_hangup: //正在拨打中挂断
+            case R.id.calling_hangup: //Raccrocher pendant la numérotation
                 hangupOperation();
                 break;
-            case R.id.talking_hangup: //通话中挂断
+            case R.id.talking_hangup: //Raccrocher pendant un appel
                 hangupOperation();
                 break;
-            case R.id.ring_hang_off: //响铃中挂断
+            case R.id.ring_hang_off: //Raccrocher pendant la sonnerie
                 hangupOperation();
                 break;
-            case R.id.Create_button: //手动输入ip地址
+            case R.id.Create_button: //Saisissez manuellement l'adresse IP
                 showUserInputIpView();
                 break;
-            case R.id.user_input_phoneCall: // 拨打电话的入口
-                //获取ip地址
+            case R.id.user_input_phoneCall: // Entrée pour passer un appel
+                //Obtenir l'adresse IP
                 String ip = mEditText.getText().toString();
-                // 检测是否为合法IP
+                // Vérifiez s'il s'agit d'une adresse IP légitime
                 if (NetUtils.ipCheck(ip)){
                     provider.setTargetIP(ip);
-                    //1 显示拨打界面
+                    //1 Afficher l'interface de numérotation
                     showCallingView();
                     isBusy = true;
-                    //2 发送一条拨打电话的信息。
+                    //2 Envoyer un message pour passer un appel。
                     provider.sentTextData(PHONE_MAKE_CALL.toString());
-                    IPSave.saveIP(this, ip); //保存IP
-                    hideOneInputMethod(this,mEditText); // 隐藏输入法
+                    IPSave.saveIP(this, ip); //Enregistrer l'IP
+                    hideOneInputMethod(this,mEditText); // Masquer la méthode de saisie
                 }else {
-                    Toast.makeText(this,"IP格式不对，请重新输入~",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this,"Le format IP est incorrect, veuillez saisir à nouveau ~",Toast.LENGTH_SHORT).show();
                 }
                 break;
         }
     }
 
-    //进行挂断电话时候的逻辑
+    //Logique lors du raccrochage du téléphone
     private void hangupOperation(){
         provider.sentTextData(PHONE_CALL_END.toString());
         isBusy = false;

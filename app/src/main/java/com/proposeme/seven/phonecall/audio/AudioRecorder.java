@@ -8,25 +8,25 @@ import android.util.Log;
 import com.gyz.voipdemo_speex.util.Speex;
 
 /**
- * Describe: 进行音频录音 这个是音频录制的入口文件
+ * Describe: Effectuer un enregistrement audio Ceci est le fichier d'entrée pour l'enregistrement audio
  */
 public class AudioRecorder  implements Runnable {
     String LOG = "Recorder";
-    //音频录制对象
+    //Objet d'enregistrement audio
     private AudioRecord audioRecord;
 
-    // 单例对象。
+    // Objet Singleton。
     private static AudioRecorder mAudioRecorder;
-    //回声消除
+    //Annulation d'écho
     private AcousticEchoCanceler canceler;
 
     private AudioRecorder(){
     }
 
-    //是否正在录制
+    //Enregistre
     private volatile boolean isRecording = false;
 
-    // 获取单例模式实例。
+    // Obtenir une instance du modèle singleton。
     public static AudioRecorder getAudioRecorder(){
         if (mAudioRecorder == null){
             mAudioRecorder = new AudioRecorder();
@@ -34,35 +34,35 @@ public class AudioRecorder  implements Runnable {
         return mAudioRecorder;
     }
 
-    //开始录音的逻辑
+    //Logique pour démarrer l'enregistrement
     public void startRecording() {
-        Log.e("ccc", "开启录音");
-        //计算缓存大小
+        Log.e("ccc", "Commencer l'enregistrement");
+        //Calculer la taille du cache
         int audioBufSize = AudioRecord.getMinBufferSize(AudioConfig.SAMPLERATE, AudioConfig.PLAYER_CHANNEL_CONFIG2, AudioConfig.AUDIO_FORMAT);
-        //实例化录制对象
+        //Instancier l'objet d'enregistrement
         if (null == audioRecord && audioBufSize != AudioRecord.ERROR_BAD_VALUE) {
             audioRecord = new AudioRecord(AudioConfig.AUDIO_RESOURCE,
                     AudioConfig.SAMPLERATE,
                     AudioConfig.PLAYER_CHANNEL_CONFIG2,
                     AudioConfig.AUDIO_FORMAT, audioBufSize);
         }
-        //消回音处理
+        //Traitement d'écho
         assert audioRecord != null;
         initAEC(audioRecord.getAudioSessionId());
         new Thread(this).start();
     }
 
-    // 关闭录制
+    // Désactiver l'enregistrement
     public void stopRecording() {
         this.isRecording = false;
     }
 
-    // 是否正在录制、
+    // Enregistre、
     public boolean isRecording() {
         return this.isRecording;
     }
 
-    //消除回音
+    //Élimine l'écho
     public boolean initAEC(int audioSession) {
         if (canceler != null) {
             return false;
@@ -81,13 +81,13 @@ public class AudioRecorder  implements Runnable {
         if (audioRecord.getState() == AudioRecord.STATE_UNINITIALIZED) {
             return;
         }
-        // 在录音之前实例化一个编码类，在编码类中实现的数据的发送。
+        //Avant l'enregistrement, instanciez une classe d'encodage et réalisez l'envoi de données dans la classe d'encodage.
         AudioEncoder encoder = AudioEncoder.getInstance();
         encoder.startEncoding();
         audioRecord.startRecording();
 
         this.isRecording = true;
-        Log.e("ccc", "开始编码");
+        Log.e("ccc", "Commencer le codage");
         int size = Speex.getInstance().getFrameSize();
 
         short[] samples = new short[size];

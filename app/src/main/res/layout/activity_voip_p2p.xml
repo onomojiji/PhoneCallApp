@@ -6,7 +6,7 @@
     android:background="#000000"
     android:orientation="vertical">
 
-    <!--正常显示的view，入口界面-->
+    <!--Vue normalement affichée, interface d'entrée-->
     <LinearLayout
         android:id="@+id/begin_view"
         android:layout_width="match_parent"
@@ -18,11 +18,11 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="@string/appel_pair_pair"
             android:textColor="#000000"
-            android:textSize="18sp"
-            android:text="@string/p2pPhone"/>
+            android:textSize="18sp" />
         <TextView
             android:id="@+id/create_ip_addr"
             android:layout_width="match_parent"
@@ -38,14 +38,14 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_margin="20dp"
-            android:textColor="#000000"
+            android:background="@drawable/btn_style_white"
             android:gravity="center"
-            android:text="@string/input_ip"
-            android:background="@drawable/btn_style_white"/>
+            android:text="@string/entrez_l_adresse_ip"
+            android:textColor="#000000" />
 
     </LinearLayout>
 
-    <!--手动输入ip地址进行打电话的view-->
+    <!--La vue de la saisie manuelle de l'adresse IP pour passer un appel-->
     <LinearLayout
         android:id="@+id/user_input_ip_view"
         android:layout_width="match_parent"
@@ -58,9 +58,11 @@
             android:id="@+id/user_input_TargetIp"
             android:layout_width="match_parent"
             android:layout_height="48dp"
+            android:hint="@string/entrez_ladresse_ip"
+            android:inputType="text"
             android:maxLines="1"
             android:text=""
-            android:hint="@string/input_ip_hint" />
+            android:autofillHints="" />
 
         <Button
             android:id="@+id/user_input_phoneCall"
@@ -70,13 +72,11 @@
 
     </LinearLayout>
 
-        <!--打电话时候的view-->
+        <!--Voir lors de l'appel-->
         <RelativeLayout
             android:id="@+id/calling_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
             android:gravity="bottom"
             android:visibility="visible">
             <RelativeLayout
@@ -88,27 +88,28 @@
                 android:layout_marginTop="100dp"
                 >
             </RelativeLayout>
+
             <TextView
                 android:id="@+id/targetid_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="21sp"
-                android:textColor="#FFFFFF"
-                android:gravity="center"
-                android:text="XXX"
-                android:layout_centerHorizontal="true"
                 android:layout_below="@id/head_bg"
-                android:layout_marginTop="15dp"/>
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="15dp"
+                android:gravity="center"
+                android:textColor="#FFFFFF"
+                android:textSize="21sp" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textColor="#9E9E9F"
-                android:gravity="center"
-                android:text="@string/phone_state_wait"
-                android:layout_centerHorizontal="true"
                 android:layout_below="@id/head_bg"
-                android:layout_marginTop="55dp"/>
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="55dp"
+                android:gravity="center"
+                android:text="@string/veuillez_patienter"
+                android:textColor="#9E9E9F"
+                android:textSize="14sp" />
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="100dp"
@@ -119,20 +120,22 @@
                     android:id="@+id/calling_hangup"
                     android:layout_width="66dp"
                     android:layout_height="66dp"
-                    android:src="@drawable/icon_hangup"/>
+                    android:src="@drawable/icon_hangup"
+                    android:contentDescription="@string/todo" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="12sp"
-                    android:textColor="#FFFFFF"
-                    android:gravity="center"
-                    android:text="@string/phone_state_cancel"
+                    android:layout_alignParentBottom="true"
                     android:layout_centerHorizontal="true"
-                    android:layout_alignParentBottom="true"/>
+                    android:gravity="center"
+                    android:text="Annuler"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp" />
             </RelativeLayout>
         </RelativeLayout>
 
-        <!--这个是对话时候的view-->
+        <!--Ceci est la vue pendant la conversation-->
     <RelativeLayout
         android:id="@+id/talking_view"
         android:layout_width="match_parent"
@@ -152,13 +155,11 @@
                 android:gravity="center"
                 android:textColor="#FFFFFF"
                 android:textSize="13sp"
-                android:text="00:00" />
+                android:text="@string/_00_00" />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
                 android:orientation="horizontal"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
                 android:gravity="bottom"
                 android:visibility="visible">
 
@@ -169,23 +170,23 @@
                 <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="100dp"
-                    android:layout_alignParentBottom="true"
-                    android:layout_centerHorizontal="true"
                     android:layout_marginBottom="26dp">
                     <ImageView
                         android:id="@+id/talking_hangup"
                         android:layout_width="66dp"
                         android:layout_height="66dp"
-                        android:src="@drawable/icon_hangup"/>
+                        android:src="@drawable/icon_hangup"
+                        android:contentDescription="@string/todo" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="12sp"
-                        android:textColor="#FFFFFF"
-                        android:gravity="center"
-                        android:text="@string/phone_state_cancel"
+                        android:layout_alignParentBottom="true"
                         android:layout_centerHorizontal="true"
-                        android:layout_alignParentBottom="true"/>
+                        android:gravity="center"
+                        android:text="Arrêter"
+                        android:textColor="#FFFFFF"
+                        android:textSize="12sp" />
                 </RelativeLayout>
                 <View
                     android:layout_width="match_parent"
@@ -195,7 +196,7 @@
         </LinearLayout>
     </RelativeLayout>
 
-    <!--这个是响铃时候的view-->
+    <!--C'est la vue quand la cloche sonne-->
     <RelativeLayout
         android:id="@+id/ring_view"
         android:layout_width="match_parent"
@@ -210,27 +211,29 @@
             android:layout_marginTop="100dp"
             >
         </RelativeLayout>
+
         <TextView
             android:id="@+id/ring_targetid_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="21sp"
-            android:textColor="#FFFFFF"
-            android:gravity="center"
-            android:text="XXX"
-            android:layout_centerHorizontal="true"
             android:layout_below="@id/ring_head_bg"
-            android:layout_marginTop="15dp"/>
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="15dp"
+            android:gravity="center"
+            android:text="@string/onomo"
+            android:textColor="#FFFFFF"
+            android:textSize="21sp" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:textColor="#9E9E9F"
-            android:gravity="center"
-            android:text="@string/phone_state_invite"
-            android:layout_centerHorizontal="true"
             android:layout_below="@id/ring_head_bg"
-            android:layout_marginTop="55dp"/>
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="55dp"
+            android:gravity="center"
+            android:text="@string/appel_entrant"
+            android:textColor="#9E9E9F"
+            android:textSize="14sp" />
         <LinearLayout
             android:id="@+id/ring_ring_view"
             android:layout_width="match_parent"
@@ -247,20 +250,23 @@
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
+
                 <ImageView
                     android:id="@+id/ring_hang_off"
                     android:layout_width="66dp"
                     android:layout_height="66dp"
-                    android:src="@drawable/icon_hangup"/>
+                    android:contentDescription="@string/todo2"
+                    android:src="@drawable/icon_hangup" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="12sp"
-                    android:textColor="#FFFFFF"
-                    android:gravity="center"
-                    android:text="@string/phone_state_cancel"
+                    android:layout_alignParentBottom="true"
                     android:layout_centerHorizontal="true"
-                    android:layout_alignParentBottom="true"/>
+                    android:gravity="center"
+                    android:text="Refuser"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp" />
             </RelativeLayout>
 
             <View
@@ -270,20 +276,23 @@
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
+
                 <ImageView
                     android:id="@+id/ring_pickup"
                     android:layout_width="66dp"
                     android:layout_height="66dp"
-                    android:src="@drawable/icon_mic_picup"/>
+                    android:contentDescription="@string/todo1"
+                    android:src="@drawable/icon_mic_picup" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="12sp"
-                    android:textColor="#FFFFFF"
-                    android:gravity="center"
-                    android:text="@string/phone_state_answer"
+                    android:layout_alignParentBottom="true"
                     android:layout_centerHorizontal="true"
-                    android:layout_alignParentBottom="true"/>
+                    android:gravity="center"
+                    android:text="Accepter"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp" />
             </RelativeLayout>
             <View
                 android:layout_width="match_parent"

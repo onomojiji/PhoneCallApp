@@ -1,7 +1,7 @@
 package com.proposeme.seven.phonecall.net;
 
 /**
- * Describe: 存储产生的音频数据
+ * Describe: Stocker les données audio générées
  */
 public class Message {
 

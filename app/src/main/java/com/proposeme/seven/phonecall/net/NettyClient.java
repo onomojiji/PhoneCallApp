@@ -9,13 +9,13 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 
 /**
- * Describe: 使用netty框架构建音频传输客户端
- * 此代理只是监听本地端口，然后在发送数据的时候需要指定对方ip和对方端口
+ * Describe: Utilisez le framework Netty pour créer un client de transmission audio
+ * Ce proxy écoute uniquement le port local, puis doit spécifier l'adresse IP et le port de l'autre partie lors de l'envoi de données
  */
 public class NettyClient {
 
     private NettyReceiverHandler handler;
-    private int port = BaseData.PORT;  // 监听端口
+    private int port = BaseData.PORT;  // port d'ecoute
 
     private EventLoopGroup group;
 
@@ -27,7 +27,7 @@ public class NettyClient {
     }
 
     /**
-     * 获取Client 单例对象
+     * Obtenir un objet client singleton
      * @return NettyClient
      */
     public static NettyClient getClient(){
@@ -39,8 +39,8 @@ public class NettyClient {
     }
 
     /**
-     *  注册回调
-     * @param callback 回调变量。
+     *  Enregistrer le rappel
+     * @param callback Variable de rappel。
      */
     public void setFrameResultedCallback(NettyReceiverHandler.FrameResultedCallback callback) {
         if (handler != null){
@@ -49,29 +49,29 @@ public class NettyClient {
     }
 
     /**
-     * 初始化Netty对象。
+     * Initialiser l'objet Netty。
      */
     private void init() {
-        //初始化receiverHandler.
+        //Initialiser receiverHandler.
         handler = new NettyReceiverHandler();
 
-        //启动客户端进行发送数据
+        //Démarrez le client pour envoyer des données
         new Thread(new Runnable() {
             @Override
             public void run() {
                 Bootstrap b = new Bootstrap();
                 group = new NioEventLoopGroup();
                 try {
-                    //设置netty的连接属性。
+                    //Définir les propriétés de connexion de netty。
                     b.group(group)
-                            .channel(NioDatagramChannel.class) //异步的 UDP 连接
+                            .channel(NioDatagramChannel.class) //Connexion UDP asynchrone
                             .option(ChannelOption.SO_BROADCAST, true)
-                            .option(ChannelOption.SO_RCVBUF, 1024 * 1024)//接收区2m缓存
-                            .option(ChannelOption.RCVBUF_ALLOCATOR, new FixedRecvByteBufAllocator(65535))//加上这个，里面是最大接收、发送的长度
-                            .handler(handler); //设置数据的处理器
+                            .option(ChannelOption.SO_RCVBUF, 1024 * 1024)//Tampon de 2 m dans la zone de réception
+                            .option(ChannelOption.RCVBUF_ALLOCATOR, new FixedRecvByteBufAllocator(65535))//Avec cela, il y a la longueur maximale de réception et d'envoi
+                            .handler(handler); //Configurer le processeur de données
 
                     b.bind(port).sync().channel().closeFuture().await();
-                    //构造一个劲监听本地端口的netty代理
+                    //Construisez un proxy netty qui écoute le port local
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
@@ -83,27 +83,27 @@ public class NettyClient {
 
 
     /**
-     *  发送数据到指定IP地址，
-     * @param targetIp 目标IP
-     * @param data 数据
-     * @param msgType 数据类型
+     *  Envoyer des données à l'adresse IP spécifiée，
+     * @param targetIp IP cible
+     * @param data Les données
+     * @param msgType type de données
      */
     public void UserIPSendData(String targetIp, Object data, String msgType) {
-        //这个就是NettyReceiverHandler.sendData（）方法的调用，也即是说，在NettyReceiverHandler这里面可以
-        //即是处理接受数据的也是处理，发送数据的。
+        //C'est l'appel de la méthode NettyReceiverHandler.sendData (), c'est-à-dire qu'elle peut être dans NettyReceiverHandler
+        //Autrement dit, le processus de réception des données traite également et envoie des données.
         handler.sendData(targetIp, port, data, msgType);
     }
 
     /**
-     * 断开连接
-     * @return true 成功断开  or  false 断开失败
+     * Déconnecter
+     * @return true Déconnexion réussie ou false Déconnexion échouée
      */
     public boolean DisConnect(){
         return  handler.DisConnect();
     }
 
     /**
-     * 优雅的关闭Netty对象。
+     * Fermez gracieusement l'objet Netty。
      */
     public void shutDownBootstrap(){
         group.shutdownGracefully();

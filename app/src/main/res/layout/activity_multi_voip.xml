@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textSize="16sp"
-            android:text="播放"/>
+            android:text="Jouer"/>
 
     </LinearLayout>
 
@@ -70,7 +70,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textSize="16sp"
-            android:text="播放"/>
+            android:text="Jouer"/>
     </LinearLayout>
 
     <LinearLayout
@@ -84,7 +84,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textSize="16sp"
-            android:text="开始混音"/>
+            android:text="Commencer à mélanger"/>
 
         <Button
             android:id="@+id/MixaudioPlayer"
@@ -92,7 +92,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textSize="16sp"
-            android:text="混音播放"/>
+            android:text="Mix lecture"/>
 
     </LinearLayout>
 

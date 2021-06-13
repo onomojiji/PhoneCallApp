@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 /**
- * Describe: 保存IP地址信息
+ * Describe: Enregistrer les informations d'adresse IP
  */
 public class IPSave {
     public static void saveIP(Context context, String ip){

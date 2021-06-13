@@ -13,13 +13,13 @@ import java.net.SocketException;
 import java.util.Enumeration;
 
 /**
- * Describe: 网络工具类，获取本机ip地址。
+ * Describe: Outils réseau pour obtenir l'adresse IP locale.
  */
 public class NetUtils {
 
 
     /**
-     * 获取本机IP地址
+     * Obtenez l'adresse IP locale
      * @param context
      * @return
      */
@@ -27,9 +27,9 @@ public class NetUtils {
         NetworkInfo info = ((ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
         if (info != null && info.isConnected()) {
-            if (info.getType() == ConnectivityManager.TYPE_MOBILE) {//当前使用2G/3G/4G网络
+            if (info.getType() == ConnectivityManager.TYPE_MOBILE) {//Utilisant actuellement le réseau 2G / 3G / 4G
                 try {
-                    //Enumeration<NetworkInterface> en=NetworkInterface.getNetworkInterfaces();
+                    //Énumération <NetworkInterface> en = NetworkInterface.getNetworkInterfaces ();
                     for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
                         NetworkInterface intf = en.nextElement();
                         for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
@@ -50,13 +50,13 @@ public class NetUtils {
                 return ipAddress;
             }
         } else {
-            //当前无网络连接,请在设置中打开网络
+            //Il n'y a actuellement pas de connexion réseau, veuillez ouvrir le réseau dans les paramètres
         }
         return null;
     }
 
     /**
-     * 将得到的int类型的IP转换为String类型
+     * Convertir l'IP de type int résultant en type String
      *
      * @param ip
      * @return
@@ -70,19 +70,19 @@ public class NetUtils {
 
 
     /**
-     *  检测输入的IP是否合法。
-     * @param text 输入的IP
+     *  Vérifiez si l'adresse IP d'entrée est légale。
+     * @param text IP saisie
      * @return TRUE OR FALSE
      */
     public static boolean ipCheck(String text) {
         if (text != null && !text.isEmpty()) {
-            // 定义正则表达式
+            // Définir une expression régulière
             String regex = "^(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|[1-9])\\."
                     + "(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)\\." +"(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)\\."
                     + "(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)$";
-            // 判断ip地址是否与正则表达式匹配
-            // 返回判断信息
-            // 返回判断信息
+            // Déterminez si l'adresse IP correspond à l'expression régulière
+            // Renvoyer les informations de jugement
+            // Renvoyer les informations de jugement
             return text.matches(regex);
         }
         return false;

@@ -4,7 +4,7 @@ import android.media.AudioFormat;
 import android.media.MediaRecorder;
 
 /**
- * Describe: 音频的配置类
+ * Describe: Classe de configuration audio
  */
 public class AudioConfig {
     /**

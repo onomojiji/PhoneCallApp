@@ -1,7 +1,7 @@
 package com.proposeme.seven.phonecall.audio;
 
 /**
- * Describe: 音频数据
+ * Describe: Données audio
  */
 public class AudioData {
     int size;

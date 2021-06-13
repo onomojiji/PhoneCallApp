@@ -8,8 +8,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 /**
- * Describe: 文件工具类
- * 实现获取基础路径，实现将文件以字节的方式进行读取到byte数组中。
+ * Describe: Outils de fichiers
+ * Réalisez pour obtenir le chemin de base, réalisez que le fichier est lu dans le tableau d'octets sous forme d'octets.
  */
 public class FileUtils {
 
@@ -19,7 +19,7 @@ public class FileUtils {
         return basePath;
     }
 
-    //将文件流读取到数组中，
+    //Lire le flux de fichiers dans un tableau，
     public static byte[] getContent(String filePath) throws IOException {
         File file = new File(filePath);
         long fileSize = file.length();
@@ -31,12 +31,12 @@ public class FileUtils {
         byte[] buffer = new byte[(int) fileSize];
         int offset = 0;
         int numRead = 0;
-        //while循环会使得read一直进行读取，fi.read()在读取完数据以后会返回-1
+        //La boucle while fera en sorte que la lecture continue à lire, fi.read () retournera -1 après la lecture des données
         while (offset < buffer.length
                 && (numRead = fi.read(buffer, offset, buffer.length - offset)) >= 0) {
             offset += numRead;
         }
-        //确保所有数据均被读取
+        //Assurez-vous que toutes les données sont lues
         if (offset != buffer.length) {
             throw new IOException("Could not completely read file "
                     + file.getName());

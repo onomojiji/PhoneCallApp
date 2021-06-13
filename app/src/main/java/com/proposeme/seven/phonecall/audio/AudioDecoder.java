@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import com.gyz.voipdemo_speex.util.Speex;
 /**
- * Describe:  根据接收到的音频流，进行解码和播放。
+ * Describe:  Selon le flux audio reçu, décodez et jouez.
  */
 public class AudioDecoder implements Runnable {
     String LOG = "AudioDecoder";
@@ -46,7 +46,7 @@ public class AudioDecoder implements Runnable {
      * startRecordAndPlay decode AMR data
      */
     public void startDecoding() {
-        System.out.println(LOG + "开始解码");
+        System.out.println(LOG + "Commencer le décodage");
         if (isDecoding) {
             return;
         }
@@ -56,21 +56,21 @@ public class AudioDecoder implements Runnable {
     @Override
     public void run() {
 
-        //新建音频播放器
+        //Nouveau lecteur audio
         AudioPlayer player = AudioPlayer.getInstance();
 
         player.startPlaying();
         this.isDecoding = true;
-        Log.d(LOG, LOG + "初始化播放器");
+        Log.d(LOG, LOG + "Initialiser le lecteur");
         int decodeSize = 0;
         while (isDecoding) {
             if (dataList.size() > 0) {
                 AudioData encodedData = dataList.remove(0);
                 decodedData = new short[Speex.getInstance().getFrameSize()];
-                byte[] data = encodedData.getReceiverdata(); //获取接收到的数据
+                byte[] data = encodedData.getReceiverdata(); //Obtenez les données reçues
                 decodeSize = Speex.getInstance().decode(data, decodedData, data.length);
                 if (decodeSize > 0) {
-                    // 将数据添加到播放器
+                    // Ajouter des données au lecteur
                     player.addData(decodedData, decodeSize);
                 }
             }

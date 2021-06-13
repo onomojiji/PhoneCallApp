@@ -14,54 +14,55 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * Describe: 此工具类进行混音的测试工具类，1 实现录音 2 创建文件和文件夹。
+ * Describe: Cette classe d'outils est une classe d'outils de test pour le mixage audio,
+ * 1 réalise l'enregistrement et 2 crée des fichiers et des dossiers.
  */
 public class AudioUtil {
     private static AudioUtil mInstance;
     private AudioRecord recorder;
-    //声音源
+    //Source sonore
     private static int audioSource = MediaRecorder.AudioSource.MIC;
-    //录音的采样频率
+    //Fréquence d'échantillonnage de l'enregistrement
     private static int audioRate = 44100;
-    //录音的声道，单声道
+    //Canal d'enregistrement, mono
     private static int audioChannel = AudioFormat.CHANNEL_IN_STEREO;
-    //量化的精度
+    //Précision de quantification
     private static int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
-    //缓存的大小
+    //Taille du cache
     private static int bufferSize = AudioRecord.getMinBufferSize(audioRate , audioChannel , audioFormat);
-    //记录播放状态
+    //Enregistrer l'état de lecture
     private boolean isRecording = false;
-    //数字信号数组
+    //Réseau de signaux numériques
     private byte[] noteArray;
-    //PCM文件
+    //Fichier PCM
     private File pcmFile;
-    //wav文件
+    //fichier wav
     private File wavFile;
-    //文件输出流
+    //Flux de sortie de fichier
     private OutputStream os;
-    //文件根目录
+    //Répertoire racine du fichier
     private String basePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/record/";
 
     private AudioUtil()
     {
     }
 
-    //创建文件夹,首先创建目录，根据传递过来的文件名进行构建新的文件。
+    //Pour créer un dossier, créez d'abord un répertoire et construisez un nouveau fichier basé sur le nom de fichier transmis.
     public void createFile(String fileName)
     {
 
         File baseFile = new File(basePath);
         if (!baseFile.exists())
-            baseFile.mkdirs(); //创建一个目录。
+            baseFile.mkdirs(); //Créer un annuaire。
 
         pcmFile = new File(basePath + fileName);
 
-        if (pcmFile.exists()) //检测文件是否存在
+        if (pcmFile.exists()) //Vérifiez si le fichier existe
             pcmFile.delete();
 
         try
         {
-            pcmFile.createNewFile();  //调用这个方法才会真实的进行文件的创建。
+            pcmFile.createNewFile();  //Appelez cette méthode pour créer réellement le fichier。
         }
         catch (IOException e)
         {
@@ -69,7 +70,7 @@ public class AudioUtil {
         }
     }
 
-    //获取一个实例。
+    //Obtenez une instance。
     public synchronized static AudioUtil getInstance()
     {
         if (mInstance == null)
@@ -79,7 +80,7 @@ public class AudioUtil {
         return mInstance;
     }
 
-    //读取录音数字数据线程
+    //Lire le fil d'enregistrement des données numériques
     class WriteThread implements Runnable
     {
         @Override
@@ -89,14 +90,14 @@ public class AudioUtil {
         }
     }
 
-    //录音线程执行体将录音信息写入文件。
+    //Le corps exécutif du thread d'enregistrement écrit les informations d'enregistrement dans le fichier。
     private void writeData()
     {
         noteArray = new byte[bufferSize];
-        //建立文件输出流
+        //Créer un flux de sortie de fichier
         try
         {
-            //首先新建一个输入流的文件，然后将录音的数据 以字节的方式写入到pcm文件中去。
+            //Créez d'abord un nouveau fichier de flux d'entrée, puis écrivez les données enregistrées dans le fichier pcm en octets.
             os = new BufferedOutputStream(new FileOutputStream(pcmFile));
         }
         catch (FileNotFoundException e)
@@ -133,7 +134,7 @@ public class AudioUtil {
         }
     }
 
-    //开始录音，设置录音参数
+    //Démarrez l'enregistrement, définissez les paramètres d'enregistrement
     public void startRecord()
     {
         recorder = new AudioRecord(audioSource , audioRate ,
@@ -142,19 +143,19 @@ public class AudioUtil {
         recorder.startRecording();
     }
 
-    //记录数据
+    //Enregistrer les données
     public void recordData()
     {
         new Thread(new WriteThread()).start();
     }
 
-    //停止录音
+    //Arrête d'enregistrer
     public void stopRecord()
     {
         if (recorder != null)
         {
             isRecording = false;
-            recorder.stop(); //释放资源
+            recorder.stop(); //Libérer les ressources
             recorder.release();
             recorder = null;
 

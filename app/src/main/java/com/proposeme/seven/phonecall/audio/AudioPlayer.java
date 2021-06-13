@@ -16,7 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Describe:  接受解码音频流进行播放
+ * Describe:  Acceptez le flux audio décodé pour la lecture
  */
 public class AudioPlayer implements  Runnable{
     String LOG = "AudioPlayer ";
@@ -28,15 +28,15 @@ public class AudioPlayer implements  Runnable{
 
     private AudioTrack audioTrack;
 
-    //媒体文件保存与读取。
+    //Enregistrer et lire des fichiers multimédias。
     private File file;
     private FileOutputStream fos;
 
     private AudioPlayer() {
-        //建立双向链表
+        //Créer une liste doublement liée
         dataList = Collections.synchronizedList(new LinkedList<AudioData>());
 
-        //文件播放测试。
+        //Test de lecture de fichier。
         File mFile = new File(Environment.getExternalStorageDirectory(),"/audio");
         if (!mFile.exists()){
             if (mFile.mkdirs()){
@@ -60,7 +60,7 @@ public class AudioPlayer implements  Runnable{
         }
     }
 
-    //获取播放音频实例
+    //Obtenez un exemple de lecture audio
     public static AudioPlayer getInstance() {
         if (player == null) {
             player = new AudioPlayer();
@@ -68,7 +68,7 @@ public class AudioPlayer implements  Runnable{
         return player;
     }
 
-    //向播放流添加数据
+    //Ajouter des données au flux de lecture
     public void addData(short[] rawData, int size) {
         AudioData decodedData = new AudioData();
         decodedData.setSize(size);
@@ -79,7 +79,7 @@ public class AudioPlayer implements  Runnable{
     }
 
     /*
-     * 初始化播放器参数
+     * Initialiser les paramètres du lecteur
      */
     private boolean initAudioTrack() {
         int bufferSize = AudioRecord.getMinBufferSize(AudioConfig.SAMPLERATE,
@@ -91,20 +91,20 @@ public class AudioPlayer implements  Runnable{
         }
         Log.i(LOG, "Player初始化的 buffersize大小" + bufferSize);
 
-        //设置播放器参数
-        //MODE_STREAM 边读边播
-        // STREAM_VOICE_CALL 表示用听筒播放。 STREAM_MUSIC 表示用扬声器
+        //Définir les paramètres du lecteur
+        //MODE_STREAM lire et jouer
+        // STREAM_VOICE_CALL signifie jouer avec l'écouteur. STREAM_MUSIC indique le locuteur
         audioTrack = new AudioTrack(AudioManager.STREAM_VOICE_CALL,
                 AudioConfig.SAMPLERATE, AudioConfig.PLAYER_CHANNEL_CONFIG2,
                 AudioConfig.AUDIO_FORMAT, bufferSize, AudioTrack.MODE_STREAM);
 
-        // set volume:设置播放音量
+        // set volume:Régler le volume de lecture
         audioTrack.setStereoVolume(1.0f, 1.0f);
         audioTrack.play();
         return true;
     }
 
-    //播放数据的添加
+    //Ajout de données de lecture
     private void playFromList() throws IOException {
         while (isPlaying) {
             while (dataList.size() > 0) {
@@ -120,7 +120,7 @@ public class AudioPlayer implements  Runnable{
 
     public void startPlaying() {
         if (isPlaying) {
-            Log.e(LOG, "验证播放器是否打开" + isPlaying);
+            Log.e(LOG, "Vérifiez que le lecteur est ouvert" + isPlaying);
             return;
         }
         new Thread(this).start();
@@ -128,14 +128,14 @@ public class AudioPlayer implements  Runnable{
 
     public void run() {
         this.isPlaying = true;
-        //初始化播放器
+        //Initialiser le lecteur
         if (!initAudioTrack()) {
-            Log.i(LOG, "播放器初始化失败");
+            Log.i(LOG, "L'initialisation du lecteur a échoué");
             return;
         }
-        Log.e(LOG, "开始播放");
+        Log.e(LOG, "Commencer à jouer");
         try {
-            playFromList(); //开始播放
+            playFromList(); //Commencer à jouer
         } catch (IOException e) {
             e.printStackTrace();
         }

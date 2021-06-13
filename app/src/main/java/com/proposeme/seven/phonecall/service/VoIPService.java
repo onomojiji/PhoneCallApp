@@ -14,18 +14,19 @@ import static com.proposeme.seven.phonecall.net.BaseData.IFS;
 import static com.proposeme.seven.phonecall.net.BaseData.PHONE_MAKE_CALL;
 
 /**
- * 语音后台支持，当有语音通话的时候，会直接的跳转到对应的界面
+ * Prise en charge de l'arrière-plan vocal, lorsqu'il y a un appel vocal,
+ * il passera directement à l'interface correspondante
  */
 public class VoIPService extends Service {
 
-    //音频播放的变量
-    private ApiProvider provider; // 唯一的作用就是将这个变量保存到这里。
+    //Variables pour la lecture audio
+    private ApiProvider provider; // Le seul effet est de sauvegarder cette variable ici.
 
     public VoIPService() {
 
     }
 
-    // 创建一个netty进行监听端口。
+    // Créez un filet à écouter sur le port.
     @Override
     public void onCreate() {
         super.onCreate();
@@ -34,14 +35,14 @@ public class VoIPService extends Service {
     }
 
     /**
-     *  此接口只是单纯的监听PHONE_MAKE_CALL请求，
+     *  Cette interface écoute simplement les requêtes PHONE_MAKE_CALL，
      */
     public void registerCallBack(){
         provider.registerFrameResultedCallback(new NettyReceiverHandler.FrameResultedCallback() {
 
             @Override
             public void onTextMessage(String msg) {
-                Log.e("ccc", "收到消息" + msg);
+                Log.e("ccc", "Reçu les nouvelles" + msg);
                 if (Integer.parseInt(msg) == PHONE_MAKE_CALL){
                     startActivity();
                 }
@@ -54,7 +55,7 @@ public class VoIPService extends Service {
 
             @Override
             public void onGetRemoteIP(String ip) {
-                if ((!ip.equals(""))){  // 当IP不为空 则更改provider中的IP地址。
+                if ((!ip.equals(""))){  // Lorsque l'adresse IP n'est pas vide, modifiez l'adresse IP dans le fournisseur.
                     provider.setTargetIP(ip);
                 }
             }
@@ -66,23 +67,23 @@ public class VoIPService extends Service {
     }
 
     /**
-     * 返回一个Binder对象
+     * Renvoyer un objet Binder
      */
     @Override
     public IBinder onBind(Intent intent) {
 
         return new MyBinder();
     }
-    // 这样外部就可以直接的获取到Service对象，然后就可以直接的操作。
+    // De cette manière, l'objet de service peut être obtenu directement de l'extérieur, puis il peut être directement actionné.
 
-    //1.service中有个类部类继承Binder，然后提供一个公有方法，返回当前service的实例。
+    //1. Il existe une classe en service qui hérite de Binder, puis fournit une méthode publique pour renvoyer une instance du service actuel.
     public class  MyBinder extends Binder {
         public VoIPService getService(){
             return VoIPService.this;
         }
     }
 
-    // 从service中启动一个服务。
+    // Démarrez un service à partir du service.
     private void  startActivity(){
         Intent intent = new Intent(this,VoIpP2PActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -93,7 +94,7 @@ public class VoIPService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        // 关闭所有的组件。
+        // Fermer tous les composants。
         provider.shutDownSocket();
         provider.stopRecordAndPlay();
     }

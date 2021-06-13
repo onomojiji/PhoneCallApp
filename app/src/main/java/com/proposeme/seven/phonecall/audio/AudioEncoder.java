@@ -11,16 +11,16 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Describe: 监听收集到的音频流，并且进行编码，让后调用EncodeProvider 将数据发送出去
+ * Describe: Surveillez le flux audio collecté et encodez-le, puis appelez EncodeProvider pour envoyer les données
  */
 public class AudioEncoder implements Runnable{
     String LOG = "AudioEncoder";
-    //单例模式构造对象
+    //Objet de construction de modèle singleton
     private static AudioEncoder encoder;
-    //是否正在编码
+    //Est en train de coder
     private volatile boolean isEncoding = false;
 
-    //每一帧的音频数据的集合
+    //Une collection de données audio pour chaque image
     private List<AudioData> dataList = null;
 
     public static AudioEncoder getInstance() {
@@ -34,7 +34,7 @@ public class AudioEncoder implements Runnable{
         dataList = Collections.synchronizedList(new LinkedList<AudioData>());
     }
 
-    //存放录音的数据
+    //Stocker les données enregistrées
     public void addData(short[] data, int size) {
         AudioData rawData = new AudioData();
         rawData.setSize(size);
@@ -45,21 +45,21 @@ public class AudioEncoder implements Runnable{
     }
 
     /**
-     * 开始编码。
+     * Commencer le codage。
      */
     public void startEncoding() {
 
-        Log.e("ccc", "编码子线程启动");
+        Log.e("ccc", "Le sous-thread de codage démarre");
         if (isEncoding) {
             Log.e(LOG, "encoder has been started  !!!");
             return;
         }
-        //开子线程
+        //Ouvrir le fil enfant
         new Thread(this).start();
     }
 
     /**
-     * end encoding	停止编码
+     * end encoding	Arrêter le codage
      */
     public void stopEncoding() {
         this.isEncoding = false;
@@ -71,7 +71,7 @@ public class AudioEncoder implements Runnable{
         byte[] encodedData;
         isEncoding = true;
         while (isEncoding) {
-            if (dataList.size() == 0) { //如果没有编码数据则进行等待并且释放线程
+            if (dataList.size() == 0) { //S'il n'y a pas de données encodées, attendez et relâchez le thread
                 try {
                     Thread.sleep(20);
                 } catch (InterruptedException e) {
@@ -85,9 +85,9 @@ public class AudioEncoder implements Runnable{
                 encodeSize = Speex.getInstance().encode(rawData.getRealData(),
                         0, encodedData, rawData.getSize());
                 if (encodeSize > 0) {
-                    //实现发送数据。
+                    //Réaliser l'envoi de données。
                     if (ApiProvider.getProvider()!=null)
-                        ApiProvider.getProvider().sendAudioFrame(encodedData); //发送录音数据
+                        ApiProvider.getProvider().sendAudioFrame(encodedData); //Envoyer les données d'enregistrement
                 }
             }
         }

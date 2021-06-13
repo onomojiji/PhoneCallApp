@@ -17,7 +17,7 @@ import butterknife.ButterKnife;
 
 import static com.proposeme.seven.phonecall.utils.NetUtils.getIPAddress;
 
-//p2p电话的主界面。
+//L'interface principale du téléphone p2p。
 public class MainActivity extends AppCompatActivity {
 
 
@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        BaseData.LOCALHOST = getIPAddress(this); //获取本机ip地址
+        BaseData.LOCALHOST = getIPAddress(this); //Obtenez l'adresse IP locale
         Speex.getInstance().init();
 
 
@@ -38,19 +38,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //点击之后跳转到打电话。点击多人电话会议测试。
-        findViewById(R.id.Multi_phoneCall).setOnClickListener(new View.OnClickListener() {
+        //Cliquez pour passer à l'appel. Cliquez pour tester la conférence téléphonique à plusieurs.
+        /*findViewById(R.id.Multi_phoneCall).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 MultiVoIpActivity.newInstance(MainActivity.this);
             }
-        });
+        });*/
 
 
         ((TextView)findViewById(R.id.create_ip_addr)).setText(BaseData.LOCALHOST);
         initPermission();
 
-        // 启动service
+        // Démarrer le service
         Intent intent = new Intent(this,VoIPService.class);
         startService(intent);
     }
@@ -62,10 +62,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * 初始化权限事件
+     * Événement d'autorisation initiale
      */
     private void initPermission() {
-        //检查权限
+        //Vérifier les autorisations
         PermissionManager.requestPermission(MainActivity.this, new PermissionManager.Callback() {
             @Override
             public void permissionSuccess() {

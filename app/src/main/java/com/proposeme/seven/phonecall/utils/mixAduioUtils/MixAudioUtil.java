@@ -8,31 +8,32 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
- * Describe: 混音工作类
+ * Describe: Travail de mélange
  */
 
 public class MixAudioUtil {
     /**
-     * 采用简单的平均算法 average audio mixing algorithm
-     * 测试发现这种算法会降低 录制的音量
-     * 混合pcm的算法，并且作为文件进行保存
-     * 原理：量化的语音信号的叠加等价于空气中声波的叠加，反应到音频数据上，也就是把同一个声道的数值进行简单的相加
+     * Utilisation d'un algorithme moyen simple algorithme de mixage audio moyen
+     * Le test a révélé que cet algorithme réduira le volume d'enregistrement
+     * Mélangez l'algorithme pcm et enregistrez-le sous forme de fichier
+     * Principe: La superposition de signaux vocaux quantifiés équivaut à la superposition d'ondes sonores dans l'air,
+     * qui se reflète sur les données audio, c'est-à-dire que les valeurs du même canal sont simplement ajoutées
      */
 
     public static byte[] averageMix(String file1,String file2) throws IOException {
 
         byte[][] bMulRoadAudioes =  new byte[][]{
-                FileUtils.getContent(file1),    //第一个文件
-                FileUtils.getContent(file2)     //第二个文件
+                FileUtils.getContent(file1),    //Premier fichier
+                FileUtils.getContent(file2)     //Deuxième fichier
         };
 
 
-        byte[] realMixAudio = bMulRoadAudioes[0]; //保存混音之后的数据。
+        byte[] realMixAudio = bMulRoadAudioes[0]; //Sauvegardez les données après le mélange。
         Log.e("ccc", " bMulRoadAudioes length " + bMulRoadAudioes.length); //2
-        //判断两个文件的大小是否相同，如果不同进行补齐操作
-        for (int rw = 0; rw < bMulRoadAudioes.length; ++rw) { //length一直都是等于2.依次检测file长度和file2长度
+        //Déterminez si la taille des deux fichiers est la même, et si elles sont différentes, effectuez l'opération de remplissage
+        for (int rw = 0; rw < bMulRoadAudioes.length; ++rw) { //La longueur est toujours égale à 2. La longueur du fichier et la longueur du fichier2 sont détectées tour à tour
             if (bMulRoadAudioes[rw].length != realMixAudio.length) {
-                Log.e("ccc", "column of the road of audio + " + rw + " is diffrent.");
+                Log.e("ccc", "colonne du chemin de l'audio + " + rw + " est différente.");
                 if (bMulRoadAudioes[rw].length<realMixAudio.length){
                     realMixAudio = subBytes(realMixAudio,0,bMulRoadAudioes[rw].length); //进行数组的扩展
                 }
@@ -42,10 +43,10 @@ public class MixAudioUtil {
             }
         }
 
-        int row = bMulRoadAudioes.length;       //行
-        int column = realMixAudio.length / 2;   //列
+        int row = bMulRoadAudioes.length;       //Ligne
+        int column = realMixAudio.length / 2;   //Colonne
         short[][] sMulRoadAudioes = new short[row][column];
-        for (int r = 0; r < row; ++r) {         //前半部分
+        for (int r = 0; r < row; ++r) {         //première moitié
             for (int c = 0; c < column; ++c) {
                 sMulRoadAudioes[r][c] = (short) ((bMulRoadAudioes[r][c * 2] & 0xff) | (bMulRoadAudioes[r][c * 2 + 1] & 0xff) << 8);
             }
@@ -62,26 +63,26 @@ public class MixAudioUtil {
             sMixAudio[sc] = (short) (mixVal / row);
         }
 
-        //合成混音保存在realMixAudio
-        for (sr = 0; sr < column; ++sr) { //后半部分
+        //Le mix synthétisé est enregistré dans realMixAudio
+        for (sr = 0; sr < column; ++sr) { //Deuxième partie
             realMixAudio[sr * 2] = (byte) (sMixAudio[sr] & 0x00FF);
             realMixAudio[sr * 2 + 1] = (byte) ((sMixAudio[sr] & 0xFF00) >> 8);
         }
 
-        //保存混合之后的pcm
+        //Enregistrez le PCM après le mélange
         FileOutputStream fos = null;
-        //保存合成之后的文件。
+        //Enregistrez le fichier après la synthèse。
         File saveFile = new File(FileUtils.getFileBasePath()+ "averageMix.pcm" );
         if (saveFile.exists()) {
             saveFile.delete();
         }
-        fos = new FileOutputStream(saveFile);// 建立一个可存取字节的文件
+        fos = new FileOutputStream(saveFile);// Créer un fichier avec des octets accessibles
         fos.write(realMixAudio);
-        fos.close();// 关闭写入流
-        return realMixAudio; //返回合成的混音。
+        fos.close();// Fermer le flux d'écriture
+        return realMixAudio; //Revenir au mix synthétisé。
     }
 
-    //合并两个音轨。
+    //Combinez deux pistes audio。
     private static byte[] subBytes(byte[] src, int begin, int count) {
         byte[] bs = new byte[count];
         System.arraycopy(src, begin, bs, 0, count);

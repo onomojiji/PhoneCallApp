@@ -18,12 +18,14 @@
         android:id="@+id/phoneCall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="P2P Phone" />
+        android:text="Appel Vocal" />
 
+    <!--
     <Button
         android:id="@+id/Multi_phoneCall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Multi Phone" />
+        -->
 
 </LinearLayout>

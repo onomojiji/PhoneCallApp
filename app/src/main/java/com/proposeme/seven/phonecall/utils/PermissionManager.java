@@ -9,7 +9,7 @@ import com.yanzhenjie.permission.AndPermission;
 import java.util.List;
 
 /**
- * Describe: 管理安卓权限申请。
+ * Describe: Gérer l'application d'autorisation Android。
  */
 public class PermissionManager {
 
@@ -29,7 +29,7 @@ public class PermissionManager {
                 .onDenied(new Action() {
                     @Override
                     public void onAction(@NonNull List<String> permissions) {
-                        //授权失败？是否弹出窗
+                        //L'autorisation à échouée? Ouvrir ou non une fenêtre
                         if (callback != null)
                             callback.permissionFailed();
                         if (AndPermission.hasAlwaysDeniedPermission(context, permissions)) {
